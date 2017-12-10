@@ -6,28 +6,30 @@ public class CollectibleItem : MonoBehaviour {
 
     public int additionalShots;
     public GameObject art;
-    public float blinkTime;
-    private Coroutine blinkCoroutine;
+    public float flashTime;
+    private Coroutine flashCoroutine;
 
     private void Awake() {
-        blinkCoroutine = StartCoroutine(blink(blinkTime));
+        flashCoroutine = StartCoroutine(flash(flashTime));
     }
 
     private void OnDestroy() {
-        StopCoroutine(blinkCoroutine);
+        StopCoroutine(flashCoroutine);
     }
 
     private void OnTriggerEnter(Collider other) {
         if(other.CompareTag("Player")){
-            other.GetComponent<PlayerController>().gameControllerInstance.shots += additionalShots;
+            other.GetComponent<PlayerController>().gameControllerInstance.AddShots(additionalShots);
+            Destroy(gameObject);
         }
     }
 
-    IEnumerator blink(float blinkTime){
+    IEnumerator flash(float blinkTime){
         while(true){
             art.SetActive(false);
-            yield return new WaitForSeconds(blinkTime);
+            yield return new WaitForSeconds(flashTime);
             art.SetActive(true);
+            yield return new WaitForSeconds(flashTime);
         }
     }
 
